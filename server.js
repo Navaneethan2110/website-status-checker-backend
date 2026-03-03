@@ -140,12 +140,23 @@ setInterval(runHealthCheck, CHECK_INTERVAL);
 // ================= ROUTES =================
 
 // Add website
-app.post("/api/websites", (req, res) => {
+app.post("/api/websites", async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ message: "URL required" });
 
-  websites.push({ id: nextId++, url });
-  res.json({ message: "Website added" });
+  const newSite = { id: nextId++, url };
+  websites.push(newSite);
+
+  // Immediately check this site
+  const result = await checkWebsite(url);
+
+  checks.push({
+    website_id: newSite.id,
+    ...result,
+    checked_at: new Date(),
+  });
+
+  res.json({ message: "Website added", site: newSite });
 });
 
 // Latest status
