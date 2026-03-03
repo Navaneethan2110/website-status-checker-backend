@@ -161,6 +161,10 @@ app.post("/api/run", async (req, res) => {
   res.json({ message: "Health check executed" });
 });
 
+app.get("/", (req, res) => {
+  res.send("Website Status Backend is running 🚀");
+});
+
 // Start
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
