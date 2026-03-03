@@ -7,17 +7,28 @@ import nodemailer from "nodemailer";
 
 const app = express();
 
-const corsOptions = {
-  origin: [
-    "https://navaneethan2110.github.io",
-    "http://localhost:5173" // for local React dev
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-};
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "https://navaneethan2110.github.io",
+        "http://localhost:5173",
+      ];
 
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // handle preflight
+      // allow requests with no origin (like curl, Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+app.options("*", cors());
 
 app.use(express.json());
 
